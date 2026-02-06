@@ -32,7 +32,7 @@ public class SysDatasource implements Serializable {
     @Column(name = "name", length = 100)
     private String name;
 
-    @Column(name = "desc", length = 100)
+    @Column(name = "`desc`", length = 100)
     private String desc;
 
     @Column(name = "type", length = 100)

@@ -2,13 +2,13 @@ package com.tuituidan.openhub.util;
 
 import com.tuituidan.openhub.bean.vo.BookmarkVo;
 import com.tuituidan.openhub.consts.Consts;
-import java.time.DateTimeException;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -23,6 +23,7 @@ import org.springframework.util.Assert;
  * @date 2025/6/2
  */
 @UtilityClass
+@Slf4j
 public class BookmarkUtils {
 
     /**
@@ -79,8 +80,9 @@ public class BookmarkUtils {
             return LocalDateTime.ofInstant(Instant.ofEpochSecond(Long.parseLong(timestamp)),
                     ZoneId.systemDefault()).format(Consts.TIME_FORMATTER);
         } catch (NumberFormatException ex) {
-            throw new DateTimeException("时间转换失败", ex);
+            log.error("时间转换失败" ,ex);
         }
+        return LocalDateTime.now().format(Consts.TIME_FORMATTER);
     }
 
 }
