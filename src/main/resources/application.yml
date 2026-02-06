@@ -30,7 +30,6 @@ spring:
     permit-url:
       - /docs/**
       - /assets/**
-      - /api/v1/card/tree
       - /api/v1/notice
       - /api/v1/qrcode
       - /api/v1/attachment/*/actions/download
