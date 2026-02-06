@@ -338,8 +338,8 @@ public class CategoryService {
         int index = 1;
         for (BookmarkVo item : datas) {
             if (UploadTypeEnum.BOOKMARK.getType().equals(item.getType())) {
-                Assert.isTrue(StringUtils.length(item.getUrl()) <= 200,
-                        "保存失败，链接【" + item.getName() + "】的地址长度超过200");
+                Assert.isTrue(StringUtils.length(item.getUrl()) <= 2000,
+                        "保存失败，链接【" + item.getName() + "】的地址长度超过2000");
                 Card card = new Card();
                 card.setId(item.getId());
                 card.setAudit(true);
