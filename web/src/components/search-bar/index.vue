@@ -13,7 +13,7 @@
         </el-dropdown-menu>
       </el-dropdown>
 
-      <el-input ref="searchInput" v-model="keyword" class="search-input" placeholder="输入关键词搜索..." size="medium" @focus="showHistory = true" @keyup.enter.native="handleSearch" @keydown.enter.native="handleSearch">
+      <el-input ref="searchInput" v-model="keyword" class="search-input" placeholder="输入关键词搜索..." size="medium" @focus="showHistory = true" @keyup.enter.native="handleSearch" @keydown.enter.native="handleSearch" @keypress.native.stop>
         <el-button slot="append" icon="el-icon-search" @click="handleSearch"></el-button>
       </el-input>
     </div>
