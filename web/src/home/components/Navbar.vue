@@ -1,5 +1,6 @@
 <template>
   <div class="navbar" style="display: flex">
+    <search-bar />
     <hamburger id="hamburger-container"
                :is-active="sidebar.opened"
                class="hamburger-container" @toggleClick="toggleSideBar"/>
@@ -59,6 +60,7 @@ export default {
     'doc': () => import('@/home/components/doc'),
     'card-apply': () => import('@/home/components/card-apply'),
     'carousel-flip-notice': () => import('@/home/components/carousel-flip-notice'),
+    'search-bar': () => import('@/components/search-bar')
   },
   data() {
     return {
