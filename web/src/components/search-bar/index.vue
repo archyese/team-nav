@@ -13,7 +13,7 @@
         </el-dropdown-menu>
       </el-dropdown>
 
-      <el-input ref="searchInput" v-model="keyword" class="search-input" placeholder="输入关键词搜索..." size="medium" @focus="showHistory = true" @keyup.enter.native="handleSearch" @keydown.enter.native="handleSearch" @keypress.native.stop>
+      <el-input ref="searchInput" v-model="keyword" class="search-input" placeholder="输入关键词搜索..." size="medium" clearable @focus="showHistory = true" @keyup.enter.native="handleSearch" @keydown.enter.native="handleSearch" @keypress.native.stop>
         <el-button slot="append" icon="el-icon-search" @click="handleSearch"></el-button>
       </el-input>
     </div>
@@ -84,7 +84,7 @@ export default {
     searchFromHistory(item) {
       this.keyword = item.keyword
       this.currentEngineKey = item.engine
-      this.handleSearch()
+      this.showHistory = false
     },
     addToHistory(keyword, engine) {
       this.searchHistory = this.searchHistory.filter(item => !(item.keyword === keyword && item.engine === engine))
@@ -143,7 +143,7 @@ export default {
 <style lang="scss" scoped>
 .search-bar-fixed {
   position: fixed;
-  top: 10px;
+  top: 12px;
   left: 50%;
   transform: translateX(-50%);
   width: 450px;
@@ -152,7 +152,9 @@ export default {
   .search-input-wrapper {
     display: flex;
     align-items: center;
-    background: #f5f7fa;
+    background: rgba(245, 247, 250, 0.7);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     border-radius: 4px;
     border: 1px solid #dcdfe6;
     transition: border-color 0.2s;
@@ -175,8 +177,29 @@ export default {
 
   .search-input {
     flex: 1;
-    ::v-deep .el-input__inner { border: none; background: transparent; padding-left: 10px; }
-    ::v-deep .el-input-group__append { background: transparent; border: none; padding: 0 15px; }
+    ::v-deep .el-input__inner { 
+      border: none; 
+      background: transparent; 
+      padding-left: 10px;
+      &::placeholder {
+        color: #606266;
+      }
+    }
+    ::v-deep .el-input-group__append { 
+      background: transparent; 
+      border: none; 
+      padding: 0 15px;
+      .el-icon-search {
+        color: #606266;
+        font-weight: bold;
+      }
+    }
+    ::v-deep .el-input__suffix {
+      .el-icon-circle-close {
+        color: #606266;
+        font-weight: bold;
+      }
+    }
   }
 
   .history-dropdown {

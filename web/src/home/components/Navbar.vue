@@ -7,7 +7,7 @@
     <el-input
       ref="refSearchInput"
       class="header-search"
-      size="small"
+      size="medium"
       clearable
       placeholder="请输入关键字回车搜索..."
       v-model="keywords"
@@ -125,7 +125,7 @@ export default {
   height: 60px;
   overflow: hidden;
   position: relative;
-  background: #fff;
+  background: transparent;
   box-shadow: 0 1px 4px rgba(0, 21, 41, .08);
 
   .hamburger-container {
@@ -145,6 +145,23 @@ export default {
     float: left;
     line-height: 60px;
     width: 250px;
+    ::v-deep .el-input__inner {
+      background: rgba(245, 247, 250, 0.7);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      &::placeholder {
+        color: #606266;
+      }
+    }
+    ::v-deep .el-input__suffix {
+      .el-input__suffix-inner {
+        .el-icon-search,
+        .el-icon-circle-close {
+          color: #606266;
+          font-weight: bold;
+        }
+      }
+    }
   }
 
   .carousel-flip-notice {

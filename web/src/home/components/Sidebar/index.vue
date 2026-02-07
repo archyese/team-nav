@@ -1,12 +1,12 @@
 <template>
-  <div class="has-logo"
-       :style="{ backgroundColor: settings.sideTheme === 'theme-dark' ? variables.menuBackground : variables.menuLightBackground }">
+  <div class="has-logo sidebar-glass"
+       :class="settings.sideTheme === 'theme-dark' ? 'theme-dark' : 'theme-light'">
     <logo :collapse="isCollapse"/>
     <el-scrollbar :class="settings.sideTheme" wrap-class="scrollbar-wrapper">
       <el-menu
         :default-active="activeMenu"
         :collapse="isCollapse"
-        :background-color="settings.sideTheme === 'theme-dark' ? variables.menuBackground : variables.menuLightBackground"
+        :background-color="'transparent'"
         :text-color="settings.sideTheme === 'theme-dark' ? variables.menuColor : variables.menuLightColor"
         :unique-opened="settings.menuAccordion"
         :active-text-color="settings.theme"

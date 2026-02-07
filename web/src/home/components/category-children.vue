@@ -109,6 +109,10 @@ export default {
 
   .nav-card {
     border: none;
+    border-radius: 12px;
+    background-color: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
     box-shadow: 0 2px 2px 0 rgba(16, 116, 231, 0.14), 0 1px 5px 0 rgba(16, 116, 231, 0.12), 0 3px 1px -2px rgba(16, 116, 231, 0.2);
     cursor: pointer;
 
@@ -230,11 +234,11 @@ export default {
 }
 
 ::-webkit-scrollbar-track {
-  background-color: #f1f1f1;
+  background-color: rgba(241, 241, 241, 0.5);
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: #c0c0c0;
+  background-color: rgba(192, 192, 192, 0.7);
   border-radius: 3px;
 }
 

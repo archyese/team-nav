@@ -45,7 +45,7 @@ export default {
   width: 100%;
   position: relative;
   overflow: auto;
-  background-color: #f5f7f9;
+  background-color: transparent;
   padding-top: 20px;
 }
 
@@ -95,7 +95,7 @@ export default {
   .category-title {
     font-size: 16px;
     padding-left: 20px;
-    color: #515a6e;
+    color: #333333;
   }
 }
 

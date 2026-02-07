@@ -25,6 +25,10 @@
   position: relative;
   height: 100%;
   width: 100%;
+  background-image: url('~@/assets/images/background.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
 
   &.mobile.openSidebar {
     position: fixed;

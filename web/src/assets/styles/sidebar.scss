@@ -15,7 +15,8 @@
     -webkit-transition: width .28s;
     transition: width 0.28s;
     width: $base-sidebar-width !important;
-    background-color: $base-menu-background;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     height: 100%;
     position: fixed;
     font-size: 0px;
@@ -26,6 +27,14 @@
     overflow: hidden;
     -webkit-box-shadow: 2px 0 6px rgba(0,21,41,.35);
     box-shadow: 2px 0 6px rgba(0,21,41,.35);
+
+    &.sidebar-glass.theme-dark {
+      background-color: rgba(5, 38, 76, 0.7) !important;
+    }
+
+    &.sidebar-glass.theme-light {
+      background-color: rgba(255, 255, 255, 0.7) !important;
+    }
 
     // reset element-ui css
     .horizontal-collapse-transition {
