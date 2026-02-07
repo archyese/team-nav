@@ -1,7 +1,19 @@
 module.exports = {
   presets: [
     // https://github.com/vuejs/vue-cli/tree/master/packages/@vue/babel-preset-app
-    '@vue/cli-plugin-babel/preset'
+    ['@vue/cli-plugin-babel/preset', {
+      useBuiltIns: 'usage',    // 按需加载 polyfill
+      corejs: 3                // 使用 core-js 版本 3
+    }]
+  ],
+  plugins: [
+    [
+      'component',
+      {
+        libraryName: 'element-ui',
+        styleLibraryName: 'theme-chalk'
+      }
+    ]
   ],
   'env': {
     'development': {

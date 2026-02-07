@@ -62,14 +62,45 @@ module.exports = {
       }
     },
     plugins: [
+      // Gzip 压缩
       new CompressionPlugin({
-        cache: false,                   // 不启用文件缓存
-        test: /\.(js|css|html)?$/i,     // 压缩文件格式
+        cache: true,                    // 启用文件缓存
+        test: /\.(js|css|html|svg)?$/i, // 压缩文件格式，增加svg
         filename: '[path].gz[query]',   // 压缩后的文件名
         algorithm: 'gzip',              // 使用gzip压缩
-        minRatio: 0.8                   // 压缩率小于1才会压缩
+        threshold: 10240,               // 只压缩大于10KB的文件
+        minRatio: 0.6,                  // 压缩率小于0.6才会压缩
+        deleteOriginalAssets: false     // 保留原文件
+      }),
+      // Brotli 压缩
+      new CompressionPlugin({
+        cache: true,
+        test: /\.(js|css|html|svg)$/i,
+        filename: '[path].br[query]',
+        algorithm: 'brotliCompress',
+        compressionOptions: {
+          level: 11                     // 最大压缩级别
+        },
+        threshold: 10240,
+        minRatio: 0.6,
+        deleteOriginalAssets: false
       })
     ],
+    optimization: {
+      minimize: true,
+      minimizer: [
+        // 移除 console 和 debugger
+        new (require('terser-webpack-plugin'))({
+          terserOptions: {
+            compress: {
+              drop_console: true,
+              drop_debugger: true,
+              pure_funcs: ['console.log', 'console.info', 'console.debug']
+            }
+          }
+        })
+      ]
+    }
   },
   chainWebpack(config) {
     config.plugins.delete('preload') // TODO: need test
@@ -115,6 +146,13 @@ module.exports = {
                 name: 'chunk-elementUI', // split elementUI into a single package
                 test: /[\\/]node_modules[\\/]_?element-ui(.*)/, // in order to adapt to cnpm
                 priority: 20 // the weight needs to be larger than libs and app or it will be packaged into libs or app
+              },
+              quill: {
+                name: 'chunk-quill',
+                test: /[\\/]node_modules[\\/](quill|quill-emoji)/,
+                priority: 25, // 高于 elementUI，确保单独打包
+                chunks: 'all',
+                reuseExistingChunk: true
               },
               commons: {
                 name: 'chunk-commons',

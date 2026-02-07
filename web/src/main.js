@@ -2,8 +2,8 @@ import Vue from 'vue'
 
 import Cookies from 'js-cookie'
 
-import Element from 'element-ui'
 import './assets/styles/element-variables.scss'
+import './plugins/element' // 按需加载 Element UI
 
 import '@/assets/styles/index.scss' // global css
 import '@/assets/styles/ruoyi.scss' // ruoyi css
@@ -20,9 +20,8 @@ import VueMeta from 'vue-meta'
 Vue.use(plugins)
 Vue.use(VueMeta)
 Vue.use(directive)
-Vue.use(Element, {
-  size: Cookies.get('size') || 'medium' // set element-ui default size
-})
+
+Vue.prototype.$ELEMENT = { size: Cookies.get('size') || 'medium' } // set element-ui default size
 
 Vue.config.productionTip = false
 
