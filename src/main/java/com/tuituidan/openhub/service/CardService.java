@@ -40,6 +40,8 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -88,6 +90,11 @@ public class CardService {
      * @param keywords keywords
      * @return List
      */
+    @Cacheable(
+            value = "card:tree",
+            key = "'all'",
+            condition = "#keywords == null || #keywords.isEmpty()"
+    )
     public HomeDataVo tree(String keywords) {
         List<CategoryVo> categoryList = getCategoryWithCard(keywords);
         if (CollectionUtils.isEmpty(categoryList)) {
@@ -239,6 +246,7 @@ public class CardService {
      * @param id id
      * @param cardDto cardDto
      */
+    @CacheEvict(value = "card:tree", key = "'all'")
     public void save(String id, CardDto cardDto) {
         this.saveIcon(cardDto.getIcon());
         Card card = BeanExtUtils.convert(cardDto, Card::new);
@@ -278,6 +286,7 @@ public class CardService {
      * @param category 分类ID
      * @param sortDto sortDto
      */
+    @CacheEvict(value = "card:tree", key = "'all'")
     public void changeSort(String category, SortDto sortDto) {
         List<Card> cards = cardRepository.findByAuditTrueAndCategory(category).stream()
                 .sorted(Comparator.comparing(Card::getSort)).collect(Collectors.toList());
@@ -289,10 +298,11 @@ public class CardService {
     }
 
     /**
-     * delete
+     * 删除卡片
      *
      * @param id id
      */
+    @CacheEvict(value = "card:tree", key = "'all'")
     public void delete(String[] id) {
         List<String> ids = Arrays.asList(id);
         List<Card> cards = cardRepository.findAllById(ids);
@@ -310,6 +320,7 @@ public class CardService {
      *
      * @param id id
      */
+    @CacheEvict(value = "card:tree", key = "'all'")
     public void passApply(String[] id) {
         List<String> ids = Arrays.asList(id);
         List<Card> cards = cardRepository.findAllById(ids);

@@ -4,6 +4,7 @@ import com.tuituidan.openhub.bean.entity.Role;
 import java.util.List;
 import java.util.Set;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
@@ -17,6 +18,7 @@ import lombok.experimental.Accessors;
 @Getter
 @Setter
 @Accessors(chain = true)
+@NoArgsConstructor
 public class CategoryVo implements TreeData<CategoryVo> {
 
     private static final long serialVersionUID = 4182697738170644967L;

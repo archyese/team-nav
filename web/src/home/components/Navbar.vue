@@ -1,6 +1,6 @@
 <template>
   <div class="navbar" style="display: flex">
-    <search-bar />
+    <search-bar ref="webSearch" />
     <hamburger id="hamburger-container"
                :is-active="sidebar.opened"
                class="hamburger-container" @toggleClick="toggleSideBar"/>
@@ -89,7 +89,7 @@ export default {
   mounted() {
     document.addEventListener('keypress', event => {
       if (!document.body.className.includes('el-popup-parent--hidden')) {
-        this.$refs.refSearchInput.focus()
+        this.$refs.webSearch.$refs.searchInput.focus()
       }
     })
   },

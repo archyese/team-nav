@@ -34,6 +34,7 @@ import javax.persistence.criteria.Predicate;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -200,6 +201,7 @@ public class CategoryService {
      * @param dto dto
      * @return category
      */
+    @CacheEvict(value = "card:tree", key = "'all'")
     public Category save(String id, CategoryDto dto) {
         Category category;
         if (StringUtils.isBlank(id)) {
@@ -239,6 +241,7 @@ public class CategoryService {
      *
      * @param id id
      */
+    @CacheEvict(value = "card:tree", key = "'all'")
     public void delete(String[] id) {
         List<String> ids = Arrays.asList(id);
         List<Category> children = categoryRepository.findByPidIn(ids);
@@ -326,6 +329,7 @@ public class CategoryService {
      *
      * @param datas datas
      */
+    @CacheEvict(value = "card:tree", key = "'all'")
     public void importBookmark(List<BookmarkVo> datas) {
         checkBookmarkNodes(null, datas, 1);
         TransactionUtils.execute(() -> saveImportBookmark(datas));
