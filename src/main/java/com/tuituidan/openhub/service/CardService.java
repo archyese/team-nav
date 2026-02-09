@@ -141,11 +141,13 @@ public class CardService {
         for (CategoryVo item : categories) {
             List<CardVo> cardList = cardMap.get(item.getId());
             if (CollectionUtils.isEmpty(cardList)) {
-                continue;
+                item.setCards(Collections.emptyList());
+                item.setCardCount(0L);
+            } else {
+                cardList.sort(Comparator.comparing(CardVo::getSort));
+                item.setCards(cardList);
+                item.setCardCount((long) cardList.size());
             }
-            cardList.sort(Comparator.comparing(CardVo::getSort));
-            item.setCards(cardList);
-            item.setCardCount((long) cardList.size());
             item.setFlatSort(StringUtils.leftPad(item.getSort().toString(), 2, '0'));
             result.add(item);
         }
