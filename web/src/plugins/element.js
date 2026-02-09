@@ -10,6 +10,7 @@ import {
   Checkbox,
   CheckboxGroup,
   Switch,
+  Cascader,
   // 表单组件
   Form,
   FormItem,
@@ -60,6 +61,7 @@ const components = [
   Checkbox,
   CheckboxGroup,
   Switch,
+  Cascader,
   Form,
   FormItem,
   Table,
@@ -95,6 +97,7 @@ components.forEach(component => {
 })
 
 // 注册方法
+Vue.use(Loading.directive)
 Vue.prototype.$loading = Loading.service
 Vue.prototype.$msgbox = MessageBox
 Vue.prototype.$alert = MessageBox.alert
