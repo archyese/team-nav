@@ -90,11 +90,6 @@ public class CardService {
      * @param keywords keywords
      * @return List
      */
-    @Cacheable(
-            value = "card:tree",
-            key = "'all'",
-            condition = "#keywords == null || #keywords.isEmpty()"
-    )
     public HomeDataVo tree(String keywords) {
         List<CategoryVo> categoryList = getCategoryWithCard(keywords);
         if (CollectionUtils.isEmpty(categoryList)) {

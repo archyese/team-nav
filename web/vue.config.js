@@ -62,6 +62,58 @@ module.exports = {
       }
     },
     plugins: [
+      // PWA 离线缓存
+      new (require('workbox-webpack-plugin').GenerateSW)({
+        clientsClaim: true,
+        skipWaiting: true,
+        cacheId: 'team-nav',
+        runtimeCaching: [
+          {
+            urlPattern: /^https:\/\/fonts\.(googleapis|gstatic)\.com/,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'google-fonts',
+              expiration: {
+                maxEntries: 10,
+                maxAgeSeconds: 60 * 60 * 24 * 365
+              }
+            }
+          },
+          {
+            urlPattern: /^https:\/\/.*\.(png|jpg|jpeg|svg|gif|webp|ico)$/,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'images',
+              expiration: {
+                maxEntries: 100,
+                maxAgeSeconds: 60 * 60 * 24 * 30
+              }
+            }
+          },
+          {
+            urlPattern: /^https:\/\/.*\.(js|css)$/,
+            handler: 'StaleWhileRevalidate',
+            options: {
+              cacheName: 'static-resources',
+              expiration: {
+                maxEntries: 50,
+                maxAgeSeconds: 60 * 60 * 24 * 7
+              }
+            }
+          },
+          {
+            urlPattern: /^https?:\/\/.*\/api\//,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'api-cache',
+              expiration: {
+                maxEntries: 50,
+                maxAgeSeconds: 60 * 60 * 24
+              }
+            }
+          }
+        ]
+      }),
       // Gzip 压缩
       new CompressionPlugin({
         cache: true,                    // 启用文件缓存

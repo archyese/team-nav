@@ -61,6 +61,50 @@
         </div>
         <el-button size="small" type="primary" plain icon="el-icon-document-add" @click="saveSetting">保存配置</el-button>
         <el-button size="small" plain icon="el-icon-refresh" @click="resetSetting">重置配置</el-button>
+        <el-divider/>
+        <h3 class="drawer-title">离线缓存设置</h3>
+        <div class="drawer-item">
+          <span>启用离线缓存</span>
+          <el-switch v-model="offlineEnabled" @change="handleOfflineChange"/>
+        </div>
+        <div v-if="offlineEnabled" class="offline-info">
+          <div class="drawer-item">
+            <span>缓存条目</span>
+            <span>{{ cacheInfo.keys }} 个</span>
+          </div>
+          <div class="drawer-item">
+            <span>缓存大小</span>
+            <span>{{ cacheInfo.size }}</span>
+          </div>
+          <div class="drawer-item">
+            <span>最后同步</span>
+            <span>{{ cacheInfo.lastSync || '从未同步' }}</span>
+          </div>
+          <div class="offline-buttons">
+            <el-button size="small" type="primary" plain icon="el-icon-refresh" @click="syncData">立即同步</el-button>
+            <el-button size="small" plain icon="el-icon-delete" @click="clearCache">清除缓存</el-button>
+          </div>
+        </div>
+        <el-divider/>
+        <h3 class="drawer-title">ServiceWorker 缓存</h3>
+        <div class="drawer-item">
+          <span>启用缓存</span>
+          <el-switch v-model="swCacheEnabled" @change="handleSwCacheChange"/>
+        </div>
+        <div class="offline-info">
+          <div class="drawer-item">
+            <span>缓存条目</span>
+            <span>{{ swCacheInfo.keys }} 个</span>
+          </div>
+          <div class="drawer-item">
+            <span>缓存大小</span>
+            <span>{{ swCacheInfo.size }}</span>
+          </div>
+          <div class="offline-buttons">
+            <el-button size="small" type="primary" plain icon="el-icon-refresh" @click="updateSwCache">更新缓存</el-button>
+            <el-button size="small" plain icon="el-icon-delete" @click="clearSwCache">清除缓存</el-button>
+          </div>
+        </div>
       </div>
     </div>
   </el-drawer>
@@ -72,7 +116,14 @@ export default {
   data() {
     return {
       theme: '#409EFF',
-      sideTheme: this.$store.state.settings.sideTheme
+      sideTheme: this.$store.state.settings.sideTheme,
+      offlineEnabled: this.$offlineCache.isEnabled(),
+      cacheInfo: this.$offlineCache.getCacheInfo(),
+      swCacheEnabled: true,
+      swCacheInfo: {
+        keys: 0,
+        size: '0 B'
+      }
     };
   },
   computed: {
@@ -152,7 +203,132 @@ export default {
       this.$modal.loading("正在清除设置缓存并刷新，请稍候...");
       this.$cache.local.remove("layout-setting")
       setTimeout("window.location.reload()", 1000)
+    },
+    handleOfflineChange(val) {
+      this.$offlineCache.setEnabled(val)
+      this.cacheInfo = this.$offlineCache.getCacheInfo()
+      if (val) {
+        this.$modal.msgSuccess('已启用离线缓存')
+      } else {
+        this.$modal.msgSuccess('已关闭离线缓存')
+      }
+    },
+    syncData() {
+      this.$modal.loading('正在同步数据，请稍候...')
+      this.$store.dispatch('home/loadHomeCards').then(() => {
+        this.cacheInfo = this.$offlineCache.getCacheInfo()
+        this.$modal.closeLoading()
+        this.$modal.msgSuccess('数据同步成功')
+      }).catch(() => {
+        this.$modal.closeLoading()
+        this.$modal.msgError('数据同步失败，请检查网络')
+      })
+    },
+    clearCache() {
+      this.$modal.confirm('确定要清除离线缓存吗？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$offlineCache.clearAllCache()
+        this.cacheInfo = this.$offlineCache.getCacheInfo()
+        this.$modal.msgSuccess('缓存已清除')
+      }).catch(() => {})
+    },
+    async getSwCacheInfo() {
+      if ('caches' in window) {
+        const cacheNames = await caches.keys()
+        let totalSize = 0
+        let totalEntries = 0
+        for (const cacheName of cacheNames) {
+          const cache = await caches.open(cacheName)
+          const requests = await cache.keys()
+          totalEntries += requests.length
+          for (const request of requests) {
+            const response = await cache.match(request)
+            if (response) {
+              const blob = await response.clone().blob()
+              totalSize += blob.size
+            }
+          }
+        }
+        this.swCacheInfo = {
+          keys: totalEntries,
+          size: this.formatSize(totalSize)
+        }
+      }
+    },
+    formatSize(bytes) {
+      if (bytes < 1024) {
+        return bytes + ' B'
+      }
+      if (bytes < 1024 * 1024) {
+        return (bytes / 1024).toFixed(2) + ' KB'
+      }
+      return (bytes / (1024 * 1024)).toFixed(2) + ' MB'
+    },
+    handleSwCacheChange(val) {
+      if (val) {
+        if ('serviceWorker' in navigator) {
+          navigator.serviceWorker.register('/service-worker.js').then(() => {
+            this.$modal.msgSuccess('ServiceWorker 缓存已启用')
+          }).catch(err => {
+            this.swCacheEnabled = false
+            this.$modal.msgError('ServiceWorker 注册失败: ' + err.message)
+          })
+        }
+      } else {
+        if ('serviceWorker' in navigator) {
+          navigator.serviceWorker.getRegistration().then(registration => {
+            if (registration) {
+              registration.unregister().then(() => {
+                this.$modal.msgSuccess('ServiceWorker 缓存已禁用')
+              })
+            }
+          })
+        }
+      }
+    },
+    updateSwCache() {
+      this.$modal.loading('正在更新缓存，请稍候...')
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistration().then(registration => {
+          if (registration) {
+            registration.update().then(() => {
+              this.getSwCacheInfo()
+              this.$modal.closeLoading()
+              this.$modal.msgSuccess('缓存更新成功')
+            }).catch(err => {
+              this.$modal.closeLoading()
+              this.$modal.msgError('缓存更新失败: ' + err.message)
+            })
+          } else {
+            this.$modal.closeLoading()
+            this.$modal.msgError('未找到 ServiceWorker，请先启用缓存')
+          }
+        })
+      } else {
+        this.$modal.closeLoading()
+        this.$modal.msgError('当前浏览器不支持 ServiceWorker')
+      }
+    },
+    clearSwCache() {
+      this.$modal.confirm('确定要清除 ServiceWorker 缓存吗？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(async () => {
+        if ('caches' in window) {
+          const cacheNames = await caches.keys()
+          await Promise.all(cacheNames.map(cacheName => caches.delete(cacheName)))
+          this.swCacheInfo = { keys: 0, size: '0 B' }
+          this.$modal.msgSuccess('ServiceWorker 缓存已清除')
+        }
+      }).catch(() => {})
     }
+  },
+  mounted() {
+    this.getSwCacheInfo()
   }
 }
 </script>
@@ -221,5 +397,22 @@ export default {
     display: flex;
     justify-content: space-between;
   }
+}
+
+.offline-info {
+  margin-top: 10px;
+  padding: 10px;
+  background: #f5f5f5;
+  border-radius: 4px;
+
+  .drawer-item {
+    padding: 8px 0;
+  }
+}
+
+.offline-buttons {
+  margin-top: 12px;
+  display: flex;
+  gap: 8px;
 }
 </style>

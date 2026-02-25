@@ -1,0 +1,24 @@
+# 所有常见的依赖锁文件（根据你的包管理器选择性保留或排除）
+#package-lock.json
+yarn.lock
+pnpm-lock.yaml
+bun.lockb          # 如果用 Bun
+
+# 如果你想统一排除所有锁文件（适合不依赖它们做缓存的情况）
+# package-lock.json
+**/yarn.lock
+**/pnpm-lock.yaml
+
+# 依赖目录（必须排除）
+node_modules/
+**/node_modules/
+
+# 其他常见
+dist/
+build/
+target
+web/dist/
+web/build/
+.git
+*.log
+.env*
