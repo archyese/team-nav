@@ -230,6 +230,20 @@
   >.el-menu--popup {
     max-height: 100vh;
     overflow-y: auto;
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.15);
+
+    // 默认样式 - 同时适配亮色和暗色主题
+    background-color: #1a1a2e !important;
+
+    .el-menu-item {
+      background-color: #1a1a2e !important;
+      color: #e0e0e0 !important;
+
+      &:hover {
+        background-color: #16213e !important;
+        color: #ffffff !important;
+      }
+    }
 
     &::-webkit-scrollbar-track-piece {
       background: #d3dce6;
